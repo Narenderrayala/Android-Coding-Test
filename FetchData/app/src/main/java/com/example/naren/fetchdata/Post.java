@@ -1,9 +1,14 @@
 package com.example.naren.fetchdata;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.webkit.URLUtil;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -21,20 +26,31 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Iterator;
+import java.util.concurrent.ExecutionException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 
 public class Post extends AppCompatActivity {
+    int responseCode=100;
+    EditText Firstname;
+    EditText Lastname;
+    EditText avatar;
+    Button submit;
+    String First;
+    String Last;
+    String Serverresult="no res";
+    String avatarURL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
-        PostJson d= new PostJson();
-        d.execute(" https://reqres.in/api/users");
-
+        Firstname=(EditText)findViewById(R.id.editText);
+        Lastname=(EditText)findViewById(R.id.editText2);
+        avatar=(EditText)findViewById(R.id.editText3);
+        submit=(Button)findViewById(R.id.button3);
     }
-
-
     public class PostJson extends AsyncTask<String,Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -49,9 +65,9 @@ public class Post extends AppCompatActivity {
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
                 JSONObject jsonParam = new JSONObject();
-                jsonParam.put("first_name", "Narender");
-                jsonParam.put("last_name", "Rayala");
-                jsonParam.put("avatar", "https://s3.amazonaws.com/uifaces/faces/twitter/olegpogodaev/128.jpg");
+                jsonParam.put("first_name", First);
+                jsonParam.put("last_name", Last);
+                jsonParam.put("avatar", avatarURL);
                 Log.i("params",jsonParam.toString());
 
                 OutputStream os = urlConnection.getOutputStream();
@@ -63,7 +79,7 @@ public class Post extends AppCompatActivity {
                 writer.close();
                 os.close();
 
-                int responseCode=urlConnection.getResponseCode();
+                responseCode=urlConnection.getResponseCode();
 
                 if (responseCode == 201) {
 
@@ -127,11 +143,55 @@ public class Post extends AppCompatActivity {
             return result.toString();
         }
 
-        @Override
-        protected void onPostExecute(String result) {
-            Toast.makeText(getApplicationContext(), result,
-                    Toast.LENGTH_LONG).show();
+           }
+    public void onclick(View view)
+    {
+        First=Firstname.getText().toString();
+        Last=Lastname.getText().toString();
+        avatarURL=avatar.getText().toString();
+        if (!isValidPassword(First)) {
+
+            Firstname.setError("Please enter First name");
+            Firstname.requestFocus();
         }
+
+
+        if (!isValidPassword(Last)) {
+            Lastname.setError("please enter Lastname");
+            Lastname.requestFocus();
+        }
+         if(! URLUtil.isValidUrl(avatarURL))
+        {
+            avatar.setError("please enter valid URL");
+            avatar.requestFocus();
+        }
+
+        else {
+
+            PostJson d = new PostJson();
+            try {
+                Serverresult = d.execute(" https://reqres.in/api/users").get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
+
+            Intent in = new Intent(Post.this, ServerResponse.class);
+
+
+            in.putExtra("ServerMessage", Serverresult);
+            startActivity(in);
+        }
+    }
+
+
+    // validating password with retype password
+    private boolean isValidPassword(String pass) {
+        if (pass != null && pass.length() > 0) {
+            return true;
+        }
+        return false;
     }
 
 

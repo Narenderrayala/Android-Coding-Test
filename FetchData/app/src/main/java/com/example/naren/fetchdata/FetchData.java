@@ -34,6 +34,7 @@ public class FetchData extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fetch_data);
         list1=(ListView)findViewById(R.id.list);
+
         DownloadJson d= new DownloadJson();
         d.execute("https://reqres.in/api/users?page=");
     }
@@ -106,6 +107,7 @@ public class FetchData extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             Log.i("Website content",result);
+
             CustomAdapter customAdapter=new CustomAdapter();
             list1.setAdapter(customAdapter);
         }

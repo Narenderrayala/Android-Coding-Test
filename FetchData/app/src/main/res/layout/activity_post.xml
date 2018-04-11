@@ -6,4 +6,51 @@
     android:layout_height="match_parent"
     tools:context="com.example.naren.fetchdata.Post">
 
+    <RelativeLayout
+        android:layout_width="368dp"
+        android:layout_height="551dp"
+        android:background="@drawable/theme1"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp">
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:cursorVisible="false"
+            android:ems="10"
+            android:hint="Enter First Name"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/editText2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText"
+            android:layout_centerInParent="true"
+            android:ems="10"
+            android:hint="Enter Last Name"
+            android:inputType="textPersonName" />
+
+        <EditText
+            android:id="@+id/editText3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText2"
+            android:layout_centerInParent="true"
+            android:ems="10"
+            android:hint="Enter the URL of avatar"
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/button3"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/editText3"
+            android:layout_centerInParent="true"
+            android:onClick="onclick"
+            android:text="Submit" />
+    </RelativeLayout>
 </android.support.constraint.ConstraintLayout>
