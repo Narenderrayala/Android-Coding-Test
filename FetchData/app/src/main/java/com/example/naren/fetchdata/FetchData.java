@@ -1,3 +1,11 @@
+/*            Name of module: FetchData
+              Order of execution: #3
+              Purpose of Module: To create a functionality to obtain list of users from a test server
+              Description: In this module, I Developed a custom listview containing Imageviews and Textboxes.
+                  Here AsyncTask is used to create a thread where all the network related functions are performed.
+                  JSON data is obtained, parsed in to String and displayed in to custom list views.
+              Author: Narender Rayala  */
+
 package com.example.naren.fetchdata;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,9 +29,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
-
 public class FetchData extends AppCompatActivity {
-
     String []Firstname=new String[12];
     String []Lastname=new String[12];
     Bitmap[] Avatar=new Bitmap[12];
@@ -34,7 +40,6 @@ public class FetchData extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fetch_data);
         list1=(ListView)findViewById(R.id.list);
-
         DownloadJson d= new DownloadJson();
         d.execute("https://reqres.in/api/users?page=");
     }
@@ -76,28 +81,28 @@ public class FetchData extends AppCompatActivity {
                         }
                         try {
                             JSONArray arr=new JSONArray(reqdata);
-                            for(int i=0;i<arr.length();i++)
-                            {
-
-                                JSONObject jsonpart=arr.getJSONObject(i);
-
-                                Log.i("avatar",jsonpart.getString("avatar"));
-                                Firstname[list]=jsonpart.getString("first_name");
-                                Lastname[list]=jsonpart.getString("last_name");
-                                Log.i("Firstname",Firstname[list]);
-                                Log.i("Lastname",Lastname[list]);
-                                url2 = new URL(jsonpart.getString("avatar"));
-                                urlConnection2 = (HttpURLConnection) url2.openConnection();
-                                InputStream in2 = urlConnection2.getInputStream();
-                                Avatar[list]= BitmapFactory.decodeStream(in2);
-                                list++;
+                                for(int i=0;i<arr.length();i++)
+                                {
+                                    JSONObject jsonpart=arr.getJSONObject(i);
+                                    Log.i("avatar",jsonpart.getString("avatar"));
+                                    Firstname[list]=jsonpart.getString("first_name");
+                                    Lastname[list]=jsonpart.getString("last_name");
+                                    Log.i("Firstname",Firstname[list]);
+                                    Log.i("Lastname",Lastname[list]);
+                                    url2 = new URL(jsonpart.getString("avatar"));
+                                    urlConnection2 = (HttpURLConnection) url2.openConnection();
+                                    InputStream in2 = urlConnection2.getInputStream();
+                                    Avatar[list]= BitmapFactory.decodeStream(in2);
+                                    list++;
+                                }
                             }
-                        } catch (JSONException e) {
+                        catch (JSONException e) {
                             e.printStackTrace();
-                        }
+                            }
                         page++;
                     }
-            } catch (MalformedURLException e) {
+            }
+            catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -107,7 +112,6 @@ public class FetchData extends AppCompatActivity {
         @Override
         protected void onPostExecute(String result) {
             Log.i("Website content",result);
-
             CustomAdapter customAdapter=new CustomAdapter();
             list1.setAdapter(customAdapter);
         }
@@ -135,5 +139,4 @@ public class FetchData extends AppCompatActivity {
             return view; //while data=null donot publish list
         }
     }
-
 }

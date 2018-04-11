@@ -1,5 +1,12 @@
+/*              Name of module: Post
+                Order of execution: #4
+                Purpose of Module: To Post Data to the server and to save the response from the server
+                Description: In this Module I designed a functionality to post the data to the server using the
+                    HTTPURL connection. I connected this application to the test server and then data was converted
+                    in to JSON and data request was sent. The resultant server response was saved
+                Author: Narender Rayala
+    */
 package com.example.naren.fetchdata;
-
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.support.v7.app.AppCompatActivity;
@@ -10,10 +17,8 @@ import android.webkit.URLUtil;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import org.json.JSONException;
 import org.json.JSONObject;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataOutputStream;
@@ -29,8 +34,6 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-
 public class Post extends AppCompatActivity {
     int responseCode=100;
     EditText Firstname;
@@ -41,7 +44,6 @@ public class Post extends AppCompatActivity {
     String Last;
     String Serverresult="no res";
     String avatarURL;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,31 +71,25 @@ public class Post extends AppCompatActivity {
                 jsonParam.put("last_name", Last);
                 jsonParam.put("avatar", avatarURL);
                 Log.i("params",jsonParam.toString());
-
                 OutputStream os = urlConnection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(os, "UTF-8"));
                 writer.write(getPostDataString(jsonParam));
-
                 writer.flush();
                 writer.close();
                 os.close();
-
                 responseCode=urlConnection.getResponseCode();
-
                 if (responseCode == 201) {
-
                     BufferedReader in=new BufferedReader(
                             new InputStreamReader(
                                     urlConnection.getInputStream()));
                     StringBuffer sb = new StringBuffer("");
                     String line="";
+                        while((line = in.readLine()) != null) {
 
-                    while((line = in.readLine()) != null) {
-
-                        sb.append(line);
-                        break;
-                    }
+                            sb.append(line);
+                            break;
+                        }
 
                     in.close();
                     return sb.toString();
@@ -102,9 +98,6 @@ public class Post extends AppCompatActivity {
                 else {
                     return new String("false : "+responseCode);
                 }
-
-
-
             } catch (MalformedURLException e) {
                 e.printStackTrace();
             } catch (IOException e) {
@@ -114,27 +107,19 @@ public class Post extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-
-
             return null;
         }
         public String getPostDataString(JSONObject params) throws Exception {
-
             StringBuilder result = new StringBuilder();
             boolean first = true;
-
             Iterator<String> itr = params.keys();
-
             while(itr.hasNext()){
-
                 String key= itr.next();
                 Object value = params.get(key);
-
                 if (first)
                     first = false;
                 else
                     result.append("&");
-
                 result.append(URLEncoder.encode(key, "UTF-8"));
                 result.append("=");
                 result.append(URLEncoder.encode(value.toString(), "UTF-8"));
@@ -143,19 +128,16 @@ public class Post extends AppCompatActivity {
             return result.toString();
         }
 
-           }
+    }
     public void onclick(View view)
     {
         First=Firstname.getText().toString();
         Last=Lastname.getText().toString();
         avatarURL=avatar.getText().toString();
         if (!isValidPassword(First)) {
-
             Firstname.setError("Please enter First name");
             Firstname.requestFocus();
         }
-
-
         if (!isValidPassword(Last)) {
             Lastname.setError("please enter Lastname");
             Lastname.requestFocus();
@@ -165,8 +147,7 @@ public class Post extends AppCompatActivity {
             avatar.setError("please enter valid URL");
             avatar.requestFocus();
         }
-
-        else {
+         else {
 
             PostJson d = new PostJson();
             try {
@@ -176,16 +157,11 @@ public class Post extends AppCompatActivity {
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-
             Intent in = new Intent(Post.this, ServerResponse.class);
-
-
-            in.putExtra("ServerMessage", Serverresult);
-            startActivity(in);
+             in.putExtra("ServerMessage", Serverresult);
+             startActivity(in);
         }
     }
-
-
     // validating password with retype password
     private boolean isValidPassword(String pass) {
         if (pass != null && pass.length() > 0) {
@@ -193,7 +169,5 @@ public class Post extends AppCompatActivity {
         }
         return false;
     }
-
-
 }
 
