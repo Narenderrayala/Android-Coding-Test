@@ -1,11 +1,12 @@
 /*              Name of module: Post
                 Order of execution: #4
-                Purpose of Module: To Post Data to the server and to save the response from the server
+                Purpose of Module: To Post Data to the server and save the response
                 Description: In this Module I designed a functionality to post the data to the server using the
-                    HTTPURL connection. I connected this application to the test server and then data was converted
+                    HTTP URL connection. I connected this application to the test server and then data was converted
                     in to JSON and data request was sent. The resultant server response was saved
-                Author: Narender Rayala
-    */
+                Author: Narender Rayala*/
+
+//LIBRARIES USED
 package com.example.naren.fetchdata;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -34,12 +35,13 @@ import java.util.Iterator;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+//ACTIVITY STARTS HERE
 public class Post extends AppCompatActivity {
     int responseCode=100;
     EditText Firstname;
     EditText Lastname;
     EditText avatar;
-    Button submit;
+    Button submit;              //VARIABLES DECLARED TO STORE DIFFERENT TYPES OF DATA ITEMS
     String First;
     String Last;
     String Serverresult="no res";
@@ -53,6 +55,7 @@ public class Post extends AppCompatActivity {
         avatar=(EditText)findViewById(R.id.editText3);
         submit=(Button)findViewById(R.id.button3);
     }
+    //ASYNCTASK CLASS
     public class PostJson extends AsyncTask<String,Void, String> {
         @Override
         protected String doInBackground(String... urls) {
@@ -60,32 +63,32 @@ public class Post extends AppCompatActivity {
             HttpURLConnection urlConnection;
             try {
                 url = new URL(urls[0]);
-                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection = (HttpURLConnection) url.openConnection();   //CREATE HTTPURL CONNECTION
                 urlConnection.setReadTimeout(15000 /* milliseconds */);
                 urlConnection.setConnectTimeout(15000 /* milliseconds */);
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setDoOutput(true);
                 urlConnection.setDoInput(true);
                 JSONObject jsonParam = new JSONObject();
-                jsonParam.put("first_name", First);
+                jsonParam.put("first_name", First);     //INSERTING DATA IN TO SERVER
                 jsonParam.put("last_name", Last);
                 jsonParam.put("avatar", avatarURL);
                 Log.i("params",jsonParam.toString());
                 OutputStream os = urlConnection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(os, "UTF-8"));
-                writer.write(getPostDataString(jsonParam));
-                writer.flush();
+                writer.write(getPostDataString(jsonParam)); //THIS FUNCTION IS CALLED AS STRING IS CONVERTED TO JSON FORMAT
+                writer.flush();                             //THE RESULTANT IS WRITTEN TO SERVER
                 writer.close();
                 os.close();
-                responseCode=urlConnection.getResponseCode();
+                responseCode=urlConnection.getResponseCode();       //RESPONSE CODE IS THE VALUE FROM SERVER AS RESPONSE
                 if (responseCode == 201) {
                     BufferedReader in=new BufferedReader(
                             new InputStreamReader(
                                     urlConnection.getInputStream()));
                     StringBuffer sb = new StringBuffer("");
                     String line="";
-                        while((line = in.readLine()) != null) {
+                        while((line = in.readLine()) != null) {            //RESPONSE FROM THE SERVER IS SAVED IN SB STRING
 
                             sb.append(line);
                             break;
@@ -109,6 +112,7 @@ public class Post extends AppCompatActivity {
             }
             return null;
         }
+        //FUNCTION USED TO CONVERT STRING TO JSON DATA FORMAT
         public String getPostDataString(JSONObject params) throws Exception {
             StringBuilder result = new StringBuilder();
             boolean first = true;
@@ -129,16 +133,17 @@ public class Post extends AppCompatActivity {
         }
 
     }
+    //FUNCTION CALLED WHEN THE SUBMIT BUTTON WAS PRESSED
     public void onclick(View view)
     {
         First=Firstname.getText().toString();
         Last=Lastname.getText().toString();
-        avatarURL=avatar.getText().toString();
-        if (!isValidPassword(First)) {
+        avatarURL=avatar.getText().toString();                  //TEXT VALIDATION IS DONE HERE
+        if (!isValid(First)) {
             Firstname.setError("Please enter First name");
             Firstname.requestFocus();
         }
-        if (!isValidPassword(Last)) {
+        if (!isValid(Last)) {
             Lastname.setError("please enter Lastname");
             Lastname.requestFocus();
         }
@@ -149,21 +154,21 @@ public class Post extends AppCompatActivity {
         }
          else {
 
-            PostJson d = new PostJson();
-            try {
+            PostJson d = new PostJson();                // THE ASYNC IS CALLED HERE, AND THEN THE WRITING DATA
+             try {                                      //FETCHING SERVER RESULT  WITH THIS CALL
                 Serverresult = d.execute(" https://reqres.in/api/users").get();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             } catch (ExecutionException e) {
                 e.printStackTrace();
             }
-            Intent in = new Intent(Post.this, ServerResponse.class);
-             in.putExtra("ServerMessage", Serverresult);
+            Intent in = new Intent(Post.this, ServerResponse.class);// CALLING OTHER ACTIVITY AND SENDING THE
+             in.putExtra("ServerMessage", Serverresult);            //SERVER RESPONSE CODE TO THAT ACTIVITY
              startActivity(in);
         }
     }
-    // validating password with retype password
-    private boolean isValidPassword(String pass) {
+    // validating Text Function
+    private boolean isValid(String pass) {
         if (pass != null && pass.length() > 0) {
             return true;
         }

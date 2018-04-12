@@ -3,9 +3,10 @@
               Purpose of Module: To create a functionality to obtain list of users from a test server
               Description: In this module, I Developed a custom listview containing Imageviews and Textboxes.
                   Here AsyncTask is used to create a thread where all the network related functions are performed.
-                  JSON data is obtained, parsed in to String and displayed in to custom list views.
+                  JSON data is obtained, parsed in to String and displayed in a custom list view.
               Author: Narender Rayala  */
 
+            //Libraries Used
 package com.example.naren.fetchdata;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -29,33 +30,39 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+            //Activity Starts Here
 public class FetchData extends AppCompatActivity {
     String []Firstname=new String[12];
-    String []Lastname=new String[12];
+    String []Lastname=new String[12];  //Variables to store the User details from the server
     Bitmap[] Avatar=new Bitmap[12];
     int list=0;
-    ListView list1;
+    ListView list1;                     //Variable for listview
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fetch_data);
         list1=(ListView)findViewById(R.id.list);
-        DownloadJson d= new DownloadJson();
-        d.execute("https://reqres.in/api/users?page=");
+        DownloadJson d= new DownloadJson(); //Calling AsyncTask to create a new thread to access data from server
+        d.execute("https://reqres.in/api/users?page=");//url sent to the DownloadJson class
     }
-    public class DownloadJson extends AsyncTask<String,Void, String> {
+    public class DownloadJson extends AsyncTask<String,Void, String> { //class created to perform Network operations
         @Override
         protected String doInBackground(String... urls) {
             String result="";
             String numofpages2="1";
             int numofpages=1;
             int page=1;
-            String value;
             String newURL="";
             URL url,url2;
-            HttpURLConnection urlConnection,urlConnection2;
+            HttpURLConnection urlConnection,urlConnection2; //creating a HTTP URL connection
             numofpages=Integer.parseInt(numofpages2);
             try {
+                  /* num of pages is the variable for the total number of pages. the loop is iterated until it
+                     reaches its maximum number. First numofpage is set 1, then the page 1 was iterated.
+                     JSON data is parsed.then maximum page number is obtained. numofpage is updated to maximum page.
+                     from each page first name last name avatar is obtained. then page is incremented, then page=2
+                     which may be less than max page. Same way data is obtained from all pages */
+
                     while (page<=numofpages) {
                         newURL=urls[0]+page;
                         url = new URL(newURL);
@@ -109,6 +116,7 @@ public class FetchData extends AppCompatActivity {
             }
             return result;
         }
+        // It is the function that executes once the work with the AsyncTask is done and result is passed to this method
         @Override
         protected void onPostExecute(String result) {
             Log.i("Website content",result);
@@ -116,6 +124,7 @@ public class FetchData extends AppCompatActivity {
             list1.setAdapter(customAdapter);
         }
     }
+    //THIS CLASS IS DEFINED TO CREATE A CUSTOM LISTVIEW FROM ANOTHER LAYOUT
     class CustomAdapter extends BaseAdapter{
         @Override
         public int getCount() {
@@ -129,14 +138,15 @@ public class FetchData extends AppCompatActivity {
         public long getItemId(int i) {
             return 0;
         }
+        //THIS IS THE METHOD CALLED TO CREATE A CUSTOM Listview LAYOUT WITH IMAGE VIEW AND TEXT VIEW
         @Override
         public View getView(int i, View view, ViewGroup viewGroup) {
-            view=getLayoutInflater().inflate(R.layout.listview,null);
+            view=getLayoutInflater().inflate(R.layout.listview,null);//LAYOUT OF IMAGE AND TEXT IS CALLED HERE
             ImageView avatar=(ImageView)view.findViewById(R.id.imageView);
             TextView name=(TextView)view.findViewById(R.id.textView_name);
-            avatar.setImageBitmap(Avatar[i]);
+            avatar.setImageBitmap(Avatar[i]);               //EACH VALUES STORED IN ARRAY IS SET ONE BY ONE IN LIST VIEW
             name.setText(Firstname[i]+" "+Lastname[i]);
-            return view; //while data=null donot publish list
+            return view; //while data=null,  view would be empty
         }
     }
 }
